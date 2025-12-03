@@ -99,6 +99,11 @@ exports.signup = async (req, res) => {
     const sendResult = await sendOtpEmail(name, email, otp)
     if (!sendResult.ok) {
       console.error('Failed to send OTP email during signup (OTP stored in DB):', sendResult.error)
+      // If in development, return the OTP in the response to make testing possible
+      if (process.env.NODE_ENV !== 'production') {
+        return res.status(200).json({ message: 'OTP stored but not sent (dev)', otp, error: String(sendResult.error) });
+      }
+      return res.status(500).json({ message: 'Failed to send OTP email. Please contact support.' });
     }
 
     return res.status(200).json({ message: "OTP sent to email" });
@@ -120,8 +125,13 @@ async function sendOtpEmail(name, email, otp) {
     });
     return { ok: true };
   } catch (err) {
+    // Normalize error for callers; include SendGrid response body if available
     console.error('sendOtpEmail error (after fallbacks):', err);
-    return { ok: false, error: err };
+    const errorInfo = {
+      message: err && err.message ? err.message : String(err),
+      responseBody: err && err.response && err.response.body ? err.response.body : undefined
+    };
+    return { ok: false, error: errorInfo };
   }
 }
 
