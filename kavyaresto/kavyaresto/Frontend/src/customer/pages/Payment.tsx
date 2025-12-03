@@ -231,7 +231,7 @@ const Payment: React.FC = () => {
     )
   }
 
-  return (
+  const mainContent = (
     <div className="container py-5" style={{ backgroundColor: 'var(--background-color)', minHeight: '100vh' }}>
       <div className="row justify-content-center">
         <div className="col-12 col-lg-8">
@@ -457,6 +457,7 @@ const Payment: React.FC = () => {
       </div>
     </div>
   )
+  ;
 
   /* Payment modal and flow (frontend-only dummy integration) */
   function closeModal() {
@@ -530,7 +531,8 @@ const Payment: React.FC = () => {
   }
 
   return (
-    <> {/* Render modal portal below */}
+    <> {/* Render main content and modal portal below */}
+      {mainContent}
       {showPaymentModal && (
         <div className="payment-modal position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style={{ zIndex: 2000 }}>
           <div className="bg-dark bg-opacity-50 position-absolute w-100 h-100" onClick={closeModal}></div>
